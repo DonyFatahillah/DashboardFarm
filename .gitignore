@@ -1,0 +1,23 @@
+# Mengabaikan node_modules di kedua folder
+backend/node_modules/
+frontend/node_modules/
+
+# Mengabaikan file environment/rahasia
+backend/.env
+frontend/.env
+.env
+
+# Mengabaikan hasil build/produksi
+frontend/build/
+frontend/dist/
+backend/dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# OS & Editor
+.DS_Store
+.vscode/
+.idea/
