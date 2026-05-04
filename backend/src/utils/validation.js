@@ -40,6 +40,13 @@ const penjualanSchema = z.object({
   total_harga: z.number().positive(),
 });
 
+const userCreateSchema = z.object({
+  username: z.string().min(3),
+  password: z.string().min(6),
+  role: z.enum(['OWNER', 'MANAGER', 'STAFF']),
+  kandang_id: z.number().int().positive().nullable().optional(),
+});
+
 module.exports = {
   loginSchema,
   kandangSchema,
@@ -47,4 +54,5 @@ module.exports = {
   kematianSchema,
   pakanSchema,
   penjualanSchema,
+  userCreateSchema,
 };

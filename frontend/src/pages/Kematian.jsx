@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from '../services/axios';
-import { Plus, Loader2, Calendar, Skull, Warehouse } from 'lucide-react';
+import { Plus, Loader2, Calendar, Skull, Warehouse, FileSpreadsheet, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { exportToExcel, exportToPDF } from '../utils/export';
 
 export default function Kematian() {
   const [data, setData] = useState([]);
@@ -35,6 +36,27 @@ export default function Kematian() {
   useEffect(() => {
     fetchData();
   }, [filters]);
+
+  const handleExportExcel = () => {
+    const exportData = data.map(item => ({
+      Tanggal: new Date(item.tanggal).toLocaleDateString('id-ID'),
+      Kandang: item.nama_kandang,
+      'Jumlah Mati': item.jumlah_mati,
+      Penyebab: item.penyebab || '-'
+    }));
+    exportToExcel(exportData, `Kematian-Harian-${new Date().getTime()}`);
+  };
+
+  const handleExportPDF = () => {
+    const headers = [['Tanggal', 'Kandang', 'Jumlah Mati', 'Penyebab']];
+    const body = data.map(item => [
+      new Date(item.tanggal).toLocaleDateString('id-ID'),
+      item.nama_kandang,
+      item.jumlah_mati,
+      item.penyebab || '-'
+    ]);
+    exportToPDF(headers, body, `Kematian-Harian-${new Date().getTime()}`, 'Laporan Kematian Harian');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,6 +118,21 @@ export default function Kematian() {
             value={filters.end}
             onChange={(e) => setFilters({...filters, end: e.target.value})}
           />
+        </div>
+        <div className="flex-1" />
+        <div className="flex gap-2">
+            <button 
+                onClick={handleExportExcel}
+                className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 border border-green-200 rounded-xl text-sm font-bold hover:bg-green-100 transition-all"
+            >
+                <FileSpreadsheet className="w-4 h-4" /> Excel
+            </button>
+            <button 
+                onClick={handleExportPDF}
+                className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 border border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 transition-all"
+            >
+                <FileText className="w-4 h-4" /> PDF
+            </button>
         </div>
       </div>
 

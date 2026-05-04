@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from '../services/axios';
-import { Plus, Loader2, Calendar, ShoppingCart, User } from 'lucide-react';
+import { Plus, Loader2, Calendar, ShoppingCart, User, FileSpreadsheet, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { exportToExcel, exportToPDF } from '../utils/export';
 
 export default function Penjualan() {
   const [data, setData] = useState([]);
@@ -31,6 +32,29 @@ export default function Penjualan() {
   useEffect(() => {
     fetchData();
   }, [filters]);
+
+  const handleExportExcel = () => {
+    const exportData = data.map(item => ({
+      Tanggal: new Date(item.tanggal).toLocaleDateString('id-ID'),
+      Pembeli: item.pembeli,
+      'Jumlah (KG)': item.jumlah_kg,
+      'Harga per KG': item.harga_per_kg,
+      'Total Harga': item.total_harga
+    }));
+    exportToExcel(exportData, `Penjualan-Telur-${new Date().getTime()}`);
+  };
+
+  const handleExportPDF = () => {
+    const headers = [['Tanggal', 'Pembeli', 'Jumlah (KG)', 'Harga / KG', 'Total Harga']];
+    const body = data.map(item => [
+      new Date(item.tanggal).toLocaleDateString('id-ID'),
+      item.pembeli,
+      `${item.jumlah_kg} kg`,
+      `Rp ${item.harga_per_kg.toLocaleString('id-ID')}`,
+      `Rp ${item.total_harga.toLocaleString('id-ID')}`
+    ]);
+    exportToPDF(headers, body, `Penjualan-Telur-${new Date().getTime()}`, 'Laporan Penjualan Telur');
+  };
 
   useEffect(() => {
     setFormData(prev => ({
@@ -89,6 +113,21 @@ export default function Penjualan() {
             value={filters.end}
             onChange={(e) => setFilters({...filters, end: e.target.value})}
           />
+        </div>
+        <div className="flex-1" />
+        <div className="flex gap-2">
+            <button 
+                onClick={handleExportExcel}
+                className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 border border-green-200 rounded-xl text-sm font-bold hover:bg-green-100 transition-all"
+            >
+                <FileSpreadsheet className="w-4 h-4" /> Excel
+            </button>
+            <button 
+                onClick={handleExportPDF}
+                className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 border border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 transition-all"
+            >
+                <FileText className="w-4 h-4" /> PDF
+            </button>
         </div>
       </div>
 

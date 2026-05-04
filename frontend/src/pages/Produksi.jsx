@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from '../services/axios';
-import { Plus, Loader2, Calendar, Egg, Warehouse } from 'lucide-react';
+import { Plus, Loader2, Calendar, Egg, Warehouse, FileSpreadsheet, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { exportToExcel, exportToPDF } from '../utils/export';
 
 export default function Produksi() {
   const [data, setData] = useState([]);
@@ -24,7 +25,7 @@ export default function Produksi() {
         axios.get('/kandang')
       ]);
       setData(prodRes.data.data);
-      setKandangs(kandangRes.data.data);
+      setKandangs(kandangsRes.data.data);
     } catch (error) {
       toast.error('Failed to fetch data');
     } finally {
@@ -35,6 +36,27 @@ export default function Produksi() {
   useEffect(() => {
     fetchData();
   }, [filters]);
+
+  const handleExportExcel = () => {
+    const exportData = data.map(item => ({
+      Tanggal: new Date(item.tanggal).toLocaleDateString('id-ID'),
+      Kandang: item.nama_kandang,
+      'Jumlah (Butir)': item.jumlah_telur,
+      'Berat (Kg)': item.berat_telur
+    }));
+    exportToExcel(exportData, `Produksi-Harian-${new Date().getTime()}`);
+  };
+
+  const handleExportPDF = () => {
+    const headers = [['Tanggal', 'Kandang', 'Jumlah (Butir)', 'Berat (Kg)']];
+    const body = data.map(item => [
+      new Date(item.tanggal).toLocaleDateString('id-ID'),
+      item.nama_kandang,
+      item.jumlah_telur.toLocaleString(),
+      `${item.berat_telur} kg`
+    ]);
+    exportToPDF(headers, body, `Produksi-Harian-${new Date().getTime()}`, 'Laporan Produksi Harian');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -98,6 +120,21 @@ export default function Produksi() {
             value={filters.end}
             onChange={(e) => setFilters({...filters, end: e.target.value})}
           />
+        </div>
+        <div className="flex-1" />
+        <div className="flex gap-2">
+            <button 
+                onClick={handleExportExcel}
+                className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 border border-green-200 rounded-xl text-sm font-bold hover:bg-green-100 transition-all"
+            >
+                <FileSpreadsheet className="w-4 h-4" /> Excel
+            </button>
+            <button 
+                onClick={handleExportPDF}
+                className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 border border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 transition-all"
+            >
+                <FileText className="w-4 h-4" /> PDF
+            </button>
         </div>
       </div>
 

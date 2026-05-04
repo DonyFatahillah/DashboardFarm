@@ -11,7 +11,8 @@ import {
   Menu, 
   X,
   ChevronDown,
-  User
+  User,
+  Settings
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { clsx } from 'clsx';
@@ -47,7 +48,7 @@ export default function DashboardLayout() {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
   const navItems = [
@@ -57,6 +58,7 @@ export default function DashboardLayout() {
     { to: '/kematian', icon: Skull, label: 'Kematian' },
     { to: '/pakan', icon: Wheat, label: 'Pakan' },
     { to: '/penjualan', icon: ShoppingCart, label: 'Penjualan' },
+    ...(user?.role === 'OWNER' ? [{ to: '/admin', icon: Settings, label: 'Admin' }] : []),
   ];
 
   return (
