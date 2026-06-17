@@ -22,6 +22,7 @@ const kematianSchema = z.object({
   kandang_id: z.number().int().positive(),
   tanggal: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format (YYYY-MM-DD)'),
   jumlah_mati: z.number().int().nonnegative(),
+  jumlah_sortir: z.number().int().nonnegative().optional().default(0),
   penyebab: z.string().optional(),
 });
 

@@ -1,0 +1,93 @@
+{
+  "nav": {
+    "home": "Home",
+    "statistics": "Farm Stats",
+    "features": "Our Services",
+    "buy_now": "Order Eggs",
+    "contact_us": "Contact Us"
+  },
+  "contact_modal": {
+    "title": "Get in Touch",
+    "subtitle": "Choose your preferred way to contact Bu Sri Farm",
+    "whatsapp": "WhatsApp",
+    "email": "Email Address",
+    "instagram": "Instagram",
+    "close": "Close"
+  },
+  "whatsapp_messages": {
+    "order_eggs": "Hello Bu Sri Farm, I am interested in ordering eggs. Could you please provide the price and availability for today?"
+  },
+  "hero": {
+    "title": "Fresh Eggs from",
+    "subtitle": "Bu Sri Farm",
+    "description": "We combine traditional care with modern technology to deliver the highest quality eggs directly to you from Bu Sri Farm. Monitored in real-time for guaranteed freshness.",
+    "view_stats": "Check Our Quality",
+    "our_features": "Why Choose Us"
+  },
+  "stats": {
+    "title": "Real-Time Farm Transparency",
+    "subtitle": "See exactly how our farm is performing before you buy",
+    "total_damaged_eggs": "Unsellable Eggs",
+    "today_production": "Fresh Eggs Today",
+    "monthly_revenue": "Total Sales",
+    "active_pens": "Active Farm Units",
+    "production_trend": "Production Quality (7 Days)",
+    "production_volume": "Daily Supply Capacity"
+  },
+  "features": {
+    "title": "Professional Management for Superior Quality",
+    "tag": "Our Commitment",
+    "analytics_title": "Quality Monitoring",
+    "analytics_desc": "Every egg is a result of data-driven health and nutrition management.",
+    "inventory_title": "Direct Supply",
+    "inventory_desc": "Efficient inventory tracking ensures you get the freshest stock immediately.",
+    "staff_title": "Expert Handling",
+    "staff_desc": "Our team uses professional tools to maintain the best farming standards."
+  },
+  "footer": {
+    "quick_links": "Quick Links",
+    "contact_us": "Bulk Orders",
+    "motto": "Connecting you to the source of fresh, high-quality nutrition.",
+    "rights": "All rights reserved."
+  },
+  "login": {
+    "title": "Farm Management System",
+    "subtitle": "Sign in to access your dashboard",
+    "username": "Username",
+    "password": "Password",
+    "username_placeholder": "Enter your username",
+    "sign_in": "Sign In",
+    "welcome_back": "Welcome back!"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "kandang": "Pens",
+    "produksi": "Production",
+    "kematian": "Mortality",
+    "pakan": "Feed",
+    "penjualan": "Sales",
+    "absen": "Attendance",
+    "kesehatan": "Health",
+    "admin": "Admin",
+    "logout": "Logout"
+  },
+  "navbar": {
+    "overview": "Overview",
+    "account_settings": "Account Settings",
+    "profile_details": "Profile Details",
+    "logout_session": "Logout Session"
+  },
+  "dashboard": {
+    "title": "Dashboard Overview",
+    "subtitle": "Real-time statistics for your farm operations.",
+    "total_kandang": "Total Pens",
+    "active_livestock": "Active Livestock",
+    "today_production": "Today's Production",
+    "today_mortality": "Today's Mortality",
+    "today_sorting": "Today's Sorting",
+    "feed_used": "Feed Used (KG)",
+    "monthly_revenue": "Monthly Revenue",
+    "production_7d": "Egg Production (Last 7 Days)",
+    "production_per_pen": "Production per Pen (Last 30 Days)"
+  }
+}

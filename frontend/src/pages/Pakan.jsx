@@ -21,8 +21,8 @@ export default function Pakan() {
     try {
       const query = new URLSearchParams(filters).toString();
       const [res, kandangRes] = await Promise.all([
-        axios.get(`/pakan?${query}`),
-        axios.get('/kandang')
+        axios.get(`pakan?${query}`),
+        axios.get('kandang')
       ]);
       setData(res.data.data);
       setKandangs(kandangRes.data.data);
@@ -61,7 +61,7 @@ export default function Pakan() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/pakan', {
+      await axios.post('pakan', {
         ...formData,
         kandang_id: parseInt(formData.kandang_id),
         jumlah_kg: parseFloat(formData.jumlah_kg)

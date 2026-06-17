@@ -7,11 +7,14 @@ class DashboardRepository {
         (SELECT COUNT(*) FROM kandang) AS total_kandang,
         (
           (SELECT COALESCE(SUM(jumlah_awal), 0) FROM batch_ayam) -
-          (SELECT COALESCE(SUM(jumlah_mati), 0) FROM kematian_harian)
+          (SELECT COALESCE(SUM(jumlah_mati), 0) FROM kematian_harian) -
+          (SELECT COALESCE(SUM(jumlah_sortir), 0) FROM kematian_harian)
         ) AS total_ayam_aktif,
         (SELECT COALESCE(SUM(jumlah_telur), 0) FROM produksi_harian WHERE DATE(tanggal) = CURDATE()) AS produksi_hari_ini,
         (SELECT COALESCE(SUM(jumlah_mati), 0) FROM kematian_harian WHERE DATE(tanggal) = CURDATE()) AS kematian_hari_ini,
+        (SELECT COALESCE(SUM(jumlah_sortir), 0) FROM kematian_harian WHERE DATE(tanggal) = CURDATE()) AS sortir_hari_ini,
         (SELECT COALESCE(SUM(jumlah_kg), 0) FROM pakan_harian WHERE DATE(tanggal) = CURDATE()) AS total_pakan_hari_ini,
+        (SELECT COALESCE(SUM(jumlah_kg), 0) FROM penjualan_telur WHERE DATE(tanggal) = CURDATE()) AS total_telur_terjual_hari_ini,
         (SELECT COALESCE(SUM(total_harga), 0) FROM penjualan_telur WHERE MONTH(tanggal) = MONTH(CURDATE()) AND YEAR(tanggal) = YEAR(CURDATE())) AS total_pendapatan_bulan_ini
     `;
     

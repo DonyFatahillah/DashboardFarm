@@ -27,7 +27,7 @@ export default function AIChatbox() {
     setLoading(true);
 
     try {
-      const response = await axios.post("/ai/chat", {
+      const response = await axios.post("ai/chat", {
         message: message,
         history: chatHistory,
       });

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   LayoutDashboard, 
   Warehouse, 
@@ -7,12 +8,15 @@ import {
   Skull, 
   Wheat, 
   ShoppingCart, 
+  CheckSquare,
+  Stethoscope,
   LogOut, 
   Menu, 
   X,
   ChevronDown,
   User,
-  Settings
+  Settings,
+  Globe
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { clsx } from 'clsx';
@@ -22,11 +26,13 @@ const cn = (...args) => twMerge(clsx(args));
 
 const SidebarLink = ({ to, icon: Icon, label, collapsed }) => {
   const location = useLocation();
-  const isActive = location.pathname === to;
+  const { lang } = useParams();
+  const fullPath = `/${lang}${to}`;
+  const isActive = location.pathname === fullPath;
 
   return (
     <Link
-      to={to}
+      to={fullPath}
       className={cn(
         "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group",
         isActive 
@@ -45,21 +51,31 @@ export default function DashboardLayout() {
   const [profileOpen, setProfileOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const { lang } = useParams();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate(`/${lang}/`);
   };
 
   const navItems = [
-    { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/kandang', icon: Warehouse, label: 'Kandang' },
-    { to: '/produksi', icon: Egg, label: 'Produksi' },
-    { to: '/kematian', icon: Skull, label: 'Kematian' },
-    { to: '/pakan', icon: Wheat, label: 'Pakan' },
-    { to: '/penjualan', icon: ShoppingCart, label: 'Penjualan' },
-    ...(user?.role === 'OWNER' ? [{ to: '/admin', icon: Settings, label: 'Admin' }] : []),
+    { to: '/dashboard', icon: LayoutDashboard, label: t('sidebar.dashboard') },
+    { to: '/kandang', icon: Warehouse, label: t('sidebar.kandang') },
+    { to: '/produksi', icon: Egg, label: t('sidebar.produksi') },
+    { to: '/kematian', icon: Skull, label: t('sidebar.kematian') },
+    { to: '/pakan', icon: Wheat, label: t('sidebar.pakan') },
+    { to: '/penjualan', icon: ShoppingCart, label: t('sidebar.penjualan') },
+    { to: '/absen', icon: CheckSquare, label: t('sidebar.absen') },
+    { to: '/kesehatan', icon: Stethoscope, label: t('sidebar.kesehatan') },
+    ...(user?.role === 'OWNER' ? [{ to: '/admin', icon: Settings, label: t('sidebar.admin') }] : []),
   ];
+
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'id' : 'en';
+    navigate(`/${newLang}${location.pathname.replace(/^\/[a-z]{2}/, '')}`);
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -76,7 +92,7 @@ export default function DashboardLayout() {
               <div className="bg-primary-500 p-1.5 rounded-lg text-white">
                 <Wheat className="w-6 h-6" />
               </div>
-              <span className="font-bold text-xl text-primary-900 tracking-tight">FarmDash</span>
+              <span className="font-bold text-xl text-primary-900 tracking-tight">Bu Sri Farm</span>
             </div>
           )}
           <button 
@@ -106,7 +122,7 @@ export default function DashboardLayout() {
             )}
           >
             <LogOut className="w-5 h-5 shrink-0" />
-            {!sidebarCollapsed && <span className="font-medium">Logout</span>}
+            {!sidebarCollapsed && <span className="font-medium">{t('sidebar.logout')}</span>}
           </button>
         </div>
       </aside>
@@ -116,10 +132,18 @@ export default function DashboardLayout() {
         {/* Top Navbar */}
         <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8 sticky top-0 z-10 shadow-sm">
           <h1 className="text-xl font-semibold text-gray-800">
-            {navItems.find(i => i.to === window.location.pathname)?.label || 'Overview'}
+            {navItems.find(i => `/${lang}${i.to}` === location.pathname)?.label || t('navbar.overview')}
           </h1>
 
           <div className="flex items-center gap-4">
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-gray-600 text-sm font-medium"
+            >
+              <Globe className="w-4 h-4" />
+              {i18n.language === 'en' ? 'ID' : 'EN'}
+            </button>
+
             <div className="relative">
               <button 
                 onClick={() => setProfileOpen(!profileOpen)}
@@ -138,16 +162,16 @@ export default function DashboardLayout() {
               {profileOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
                    <div className="px-4 py-2 border-b border-gray-50 mb-1">
-                      <p className="text-xs text-gray-400 uppercase font-bold">Account Settings</p>
+                      <p className="text-xs text-gray-400 uppercase font-bold">{t('navbar.account_settings')}</p>
                    </div>
                   <button className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-500 transition-colors">
-                    <User className="w-4 h-4" /> Profile Details
+                    <User className="w-4 h-4" /> {t('navbar.profile_details')}
                   </button>
                   <button 
                     onClick={handleLogout}
                     className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
                   >
-                    <LogOut className="w-4 h-4" /> Logout Session
+                    <LogOut className="w-4 h-4" /> {t('navbar.logout_session')}
                   </button>
                 </div>
               )}

@@ -1,7 +1,17 @@
 import axios from 'axios';
 
+const getBaseURL = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl) {
+    // Ensure it ends with /api/v1/
+    const sanitized = envUrl.replace(/\/$/, '');
+    return sanitized.endsWith('/api/v1') ? `${sanitized}/` : `${sanitized}/api/v1/`;
+  }
+  return '/api/v1/';
+};
+
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api/v1',
+  baseURL: getBaseURL(),
 });
 
 instance.interceptors.request.use(

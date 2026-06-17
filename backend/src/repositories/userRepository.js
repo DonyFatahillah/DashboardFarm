@@ -11,6 +11,11 @@ class UserRepository {
     return rows[0];
   }
 
+  async findByName(username) {
+    const [rows] = await pool.query('SELECT id, username FROM users WHERE username = ?', [username]);
+    return rows[0];
+  }
+
   async findAll() {
     const [rows] = await pool.query('SELECT u.id, u.username, u.role, u.kandang_id, k.nama as kandang_nama FROM users u LEFT JOIN kandang k ON u.kandang_id = k.id');
     return rows;

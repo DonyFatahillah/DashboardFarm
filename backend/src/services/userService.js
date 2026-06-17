@@ -6,6 +6,10 @@ class UserService {
     return await userRepository.findAll();
   }
 
+  async findByName(username) {
+    return await userRepository.findByName(username);
+  }
+
   async createUser(userData) {
     const existingUser = await userRepository.findByUsername(userData.username);
     if (existingUser) {

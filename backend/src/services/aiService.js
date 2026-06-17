@@ -72,20 +72,20 @@ class AIService {
     } catch (error) {
         console.error("Gemini API Error:", error);
         
-        // If 2.0 Flash fails with 404, try falling back to 1.5 Flash
-        if (error.message?.includes("404") && this.modelName !== "gemini-1.5-flash") {
-            console.log("Falling back to gemini-1.5-flash...");
-            this.modelName = "gemini-1.5-flash";
-            this.model = this.genAI.getGenerativeModel({ model: this.modelName });
-            return this.chat(userMessage, history);
-        }
-
         if (error.message?.includes("404")) {
             throw { 
                 statusCode: 404, 
                 message: "AI Model not found. Please ensure the Gemini API is enabled in Google AI Studio and your API key is correct." 
             };
         }
+        
+        if (error.message?.includes("403")) {
+            throw { 
+                statusCode: 403, 
+                message: "AI Access Denied. Your API key or Project may be restricted (possibly due to the previous leak). Please generate a NEW key in a NEW project at Google AI Studio." 
+            };
+        }
+
         throw { statusCode: 500, message: "AI Assistant error: " + error.message };
     }
   }

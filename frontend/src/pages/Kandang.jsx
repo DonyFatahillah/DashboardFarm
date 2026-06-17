@@ -25,7 +25,7 @@ export default function Kandang() {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get('/kandang');
+      const res = await axios.get('kandang');
       setData(res.data.data);
     } catch (error) {
       toast.error('Failed to fetch data');
@@ -61,10 +61,10 @@ export default function Kandang() {
     e.preventDefault();
     try {
       if (editingId) {
-        await axios.put(`/kandang/${editingId}`, formData);
+        await axios.put(`kandang/${editingId}`, formData);
         toast.success('Kandang updated');
       } else {
-        await axios.post('/kandang', formData);
+        await axios.post('kandang', formData);
         toast.success('Kandang created');
       }
       setModalOpen(false);
@@ -79,7 +79,7 @@ export default function Kandang() {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this kandang?')) {
       try {
-        await axios.delete(`/kandang/${id}`);
+        await axios.delete(`kandang/${id}`);
         toast.success('Kandang deleted');
         fetchData();
       } catch (error) {
@@ -112,14 +112,14 @@ export default function Kandang() {
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-        <div className="p-4 border-b border-gray-50 flex items-center gap-3">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="p-6 border-b border-slate-50 flex items-center gap-3">
             <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input 
                     type="text"
-                    placeholder="Search kandang..."
-                    className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-sm"
+                    placeholder="Cari kandang..."
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-400 transition-all text-sm"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -128,13 +128,13 @@ export default function Kandang() {
             <div className="flex gap-2">
                 <button 
                     onClick={handleExportExcel}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 border border-green-200 rounded-xl text-sm font-bold hover:bg-green-100 transition-all"
+                    className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl text-sm font-bold hover:bg-emerald-100 transition-all"
                 >
                     <FileSpreadsheet className="w-4 h-4" /> Excel
                 </button>
                 <button 
                     onClick={handleExportPDF}
-                    className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 border border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 transition-all"
+                    className="flex items-center gap-2 px-4 py-2 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl text-sm font-bold hover:bg-rose-100 transition-all"
                 >
                     <FileText className="w-4 h-4" /> PDF
                 </button>
@@ -143,51 +143,51 @@ export default function Kandang() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider font-bold">
+            <thead className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold">
               <tr>
-                <th className="px-6 py-4">Nama Kandang</th>
-                <th className="px-6 py-4">Lokasi</th>
-                <th className="px-6 py-4">Kapasitas</th>
-                <th className="px-6 py-4 text-right">Aksi</th>
+                <th className="px-8 py-5">Nama Kandang</th>
+                <th className="px-6 py-5">Lokasi</th>
+                <th className="px-6 py-5">Kapasitas</th>
+                <th className="px-8 py-5 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-slate-50">
               {loading ? (
                 <tr>
                   <td colSpan="4" className="px-6 py-10 text-center">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary-500" />
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-slate-400" />
                   </td>
                 </tr>
               ) : filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-6 py-10 text-center text-gray-400">
-                    No data found
+                  <td colSpan="4" className="px-6 py-10 text-center text-slate-400">
+                    Data tidak ditemukan
                   </td>
                 </tr>
               ) : (
                 filteredData.map((item) => (
-                  <tr key={item.id} className="hover:bg-primary-50/30 transition-colors group">
-                    <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center">
+                  <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
+                    <td className="px-8 py-4">
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center shadow-inner">
                                 <Warehouse className="w-5 h-5" />
                             </div>
-                            <span className="font-semibold text-gray-900">{item.nama}</span>
+                            <span className="font-semibold text-slate-800">{item.nama}</span>
                         </div>
                     </td>
-                    <td className="px-6 py-4 text-gray-600">
-                        <div className="flex items-center gap-1.5">
-                            <MapPin className="w-4 h-4 text-gray-400" />
+                    <td className="px-6 py-4 text-slate-600">
+                        <div className="flex items-center gap-1.5 font-medium">
+                            <MapPin className="w-4 h-4 text-indigo-400" />
                             {item.lokasi}
                         </div>
                     </td>
-                    <td className="px-6 py-4 text-gray-600">
-                        <div className="flex items-center gap-1.5">
-                            <Users className="w-4 h-4 text-gray-400" />
+                    <td className="px-6 py-4 text-slate-600">
+                        <div className="flex items-center gap-1.5 font-medium">
+                            <Users className="w-4 h-4 text-amber-400" />
                             {item.kapasitas.toLocaleString()} Ekor
                         </div>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-8 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => {
@@ -195,13 +195,13 @@ export default function Kandang() {
                             setFormData({ nama: item.nama, lokasi: item.lokasi, kapasitas: item.kapasitas });
                             setModalOpen(true);
                           }}
-                          className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                          className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
                         >
                           <Pencil className="w-4 h-4" />
                         </button>
                         <button 
                           onClick={() => handleDelete(item.id)}
-                          className="p-2 text-danger-600 hover:bg-danger-50 rounded-lg transition-colors"
+                          className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

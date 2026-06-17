@@ -12,6 +12,16 @@ class UserController {
     }
   }
 
+  async findByName(req, res, next) {
+    try {
+      const { username } = req.query;
+      const user = await userService.findByName(username);
+      return successResponse(res, 'User found', user);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async createUser(req, res, next) {
     try {
       const validatedData = userCreateSchema.parse(req.body);

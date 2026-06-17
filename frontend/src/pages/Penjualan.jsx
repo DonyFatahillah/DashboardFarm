@@ -1,29 +1,32 @@
 import { useState, useEffect } from 'react';
 import axios from '../services/axios';
-import { Plus, Loader2, Calendar, ShoppingCart, User, FileSpreadsheet, FileText } from 'lucide-react';
+import { Plus, Calendar, ShoppingCart, User, Package } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { exportToExcel, exportToPDF } from '../utils/export';
 
 export default function Penjualan() {
-  const [data, setData] = useState([]);
+  const [dataTelur, setDataTelur] = useState([]);
+  const [dataPupuk, setDataPupuk] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('TELUR'); // TELUR | PUPUK
   const [formData, setFormData] = useState({ 
     tanggal: new Date().toISOString().split('T')[0], 
     pembeli: '', 
-    jumlah_kg: 0,
-    harga_per_kg: 0,
-    total_harga: 0
+    jumlah: 0,
+    harga: 0,
+    total: 0
   });
-  const [filters, setFilters] = useState({ start: '', end: '' });
 
   const fetchData = async () => {
     try {
-      const query = new URLSearchParams(filters).toString();
-      const res = await axios.get(`/penjualan?${query}`);
-      setData(res.data.data);
+      const [resTelur, resPupuk] = await Promise.all([
+        axios.get('penjualan'),
+        axios.get('pupuk')
+      ]);
+      setDataTelur(resTelur.data.data);
+      setDataPupuk(resPupuk.data.data);
     } catch (error) {
-      toast.error('Failed to fetch data');
+      toast.error('Gagal mengambil data');
     } finally {
       setLoading(false);
     }
@@ -31,208 +34,95 @@ export default function Penjualan() {
 
   useEffect(() => {
     fetchData();
-  }, [filters]);
-
-  const handleExportExcel = () => {
-    const exportData = data.map(item => ({
-      Tanggal: new Date(item.tanggal).toLocaleDateString('id-ID'),
-      Pembeli: item.pembeli,
-      'Jumlah (KG)': item.jumlah_kg,
-      'Harga per KG': item.harga_per_kg,
-      'Total Harga': item.total_harga
-    }));
-    exportToExcel(exportData, `Penjualan-Telur-${new Date().getTime()}`);
-  };
-
-  const handleExportPDF = () => {
-    const headers = [['Tanggal', 'Pembeli', 'Jumlah (KG)', 'Harga / KG', 'Total Harga']];
-    const body = data.map(item => [
-      new Date(item.tanggal).toLocaleDateString('id-ID'),
-      item.pembeli,
-      `${item.jumlah_kg} kg`,
-      `Rp ${item.harga_per_kg.toLocaleString('id-ID')}`,
-      `Rp ${item.total_harga.toLocaleString('id-ID')}`
-    ]);
-    exportToPDF(headers, body, `Penjualan-Telur-${new Date().getTime()}`, 'Laporan Penjualan Telur');
-  };
+  }, []);
 
   useEffect(() => {
-    setFormData(prev => ({
-        ...prev,
-        total_harga: prev.jumlah_kg * prev.harga_per_kg
-    }));
-  }, [formData.jumlah_kg, formData.harga_per_kg]);
+    setFormData(prev => ({ ...prev, total: prev.jumlah * prev.harga }));
+  }, [formData.jumlah, formData.harga]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/penjualan', {
-        ...formData,
-        jumlah_kg: parseFloat(formData.jumlah_kg),
-        harga_per_kg: parseFloat(formData.harga_per_kg),
-        total_harga: parseFloat(formData.total_harga)
-      });
-      toast.success('Sales recorded');
+      if (activeTab === 'TELUR') {
+        await axios.post('penjualan', {
+          tanggal: formData.tanggal,
+          pembeli: formData.pembeli,
+          jumlah_kg: parseFloat(formData.jumlah),
+          harga_per_kg: parseFloat(formData.harga),
+          total_harga: parseFloat(formData.total)
+        });
+      } else {
+        await axios.post('pupuk', {
+          tanggal: formData.tanggal,
+          pembeli: formData.pembeli,
+          jumlah_karung: parseInt(formData.jumlah),
+          harga_per_karung: parseFloat(formData.harga),
+          total_harga: parseFloat(formData.total)
+        });
+      }
+      toast.success('Data berhasil disimpan');
       setModalOpen(false);
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to save');
+      toast.error('Gagal menyimpan data');
     }
   };
 
+  const groupedData = [...dataTelur.map(d => ({...d, type: 'TELUR'})), ...dataPupuk.map(d => ({...d, type: 'PUPUK'}))].reduce((acc, curr) => {
+    const date = new Date(curr.tanggal).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    if (!acc[date]) acc[date] = [];
+    acc[date].push(curr);
+    return acc;
+  }, {});
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Penjualan Telur</h2>
-          <p className="text-gray-500">Track your sales revenue and customers.</p>
+          <h2 className="text-2xl font-bold text-gray-900">Modul Penjualan</h2>
+          <p className="text-gray-500">Kelola penjualan telur dan pupuk.</p>
         </div>
-        <button 
-          onClick={() => setModalOpen(true)}
-          className="flex items-center justify-center gap-2 bg-success-600 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-success-700 transition-all shadow-lg shadow-success-100"
-        >
+        <button onClick={() => setModalOpen(true)} className="flex items-center gap-2 bg-primary-600 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-primary-700">
           <Plus className="w-5 h-5" /> Catat Penjualan
         </button>
       </div>
 
-      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-wrap gap-4 items-end">
-        <div className="w-full md:w-40">
-          <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Dari</label>
-          <input 
-            type="date"
-            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
-            value={filters.start}
-            onChange={(e) => setFilters({...filters, start: e.target.value})}
-          />
-        </div>
-        <div className="w-full md:w-40">
-          <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Sampai</label>
-          <input 
-            type="date"
-            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
-            value={filters.end}
-            onChange={(e) => setFilters({...filters, end: e.target.value})}
-          />
-        </div>
-        <div className="flex-1" />
-        <div className="flex gap-2">
-            <button 
-                onClick={handleExportExcel}
-                className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 border border-green-200 rounded-xl text-sm font-bold hover:bg-green-100 transition-all"
-            >
-                <FileSpreadsheet className="w-4 h-4" /> Excel
-            </button>
-            <button 
-                onClick={handleExportPDF}
-                className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 border border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 transition-all"
-            >
-                <FileText className="w-4 h-4" /> PDF
-            </button>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase font-bold">
-              <tr>
-                <th className="px-6 py-4">Tanggal</th>
-                <th className="px-6 py-4">Pembeli</th>
-                <th className="px-6 py-4 text-center">Jumlah (KG)</th>
-                <th className="px-6 py-4 text-right">Total Harga</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {loading ? (
-                <tr>
-                  <td colSpan="4" className="px-6 py-10 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-primary-500" /></td>
-                </tr>
-              ) : data.length === 0 ? (
-                <tr>
-                  <td colSpan="4" className="px-6 py-10 text-center text-gray-400">No records found</td>
-                </tr>
-              ) : (
-                data.map((item) => (
-                  <tr key={item.id} className="hover:bg-success-50/20 transition-colors">
-                    <td className="px-6 py-4 font-medium">{new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
-                    <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                            <User className="w-4 h-4 text-gray-400" />
-                            <span className="font-semibold text-gray-700">{item.pembeli}</span>
-                        </div>
-                    </td>
-                    <td className="px-6 py-4 text-center">{item.jumlah_kg} kg</td>
-                    <td className="px-6 py-4 text-right font-bold text-success-600">Rp {item.total_harga.toLocaleString('id-ID')}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+      <div className="space-y-6">
+        {Object.keys(groupedData).map(date => (
+          <div key={date} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <h4 className="font-bold text-gray-800 border-b pb-2 mb-4 flex items-center gap-2"><Calendar className="w-4 h-4" /> {date}</h4>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {groupedData[date].map(item => (
+                <div key={`${item.type}-${item.id}`} className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div className="flex justify-between items-start mb-2">
+                        <span className="font-bold text-gray-700">{item.pembeli}</span>
+                        <span className={`text-xs font-bold px-2 py-1 rounded-lg ${item.type === 'TELUR' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>{item.type}</span>
+                    </div>
+                    <p className="text-sm font-semibold text-primary-600">Rp {item.total_harga.toLocaleString('id-ID')}</p>
+                    <p className="text-xs text-gray-500">{item.type === 'TELUR' ? `${item.jumlah_kg} kg` : `${item.jumlah_karung} karung`}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-            <div className="bg-success-600 px-6 py-4 text-white flex items-center justify-between">
-              <h3 className="font-bold text-lg">Catat Penjualan</h3>
-              <button onClick={() => setModalOpen(false)} className="hover:bg-white/20 p-1 rounded-lg">
-                <Plus className="w-6 h-6 rotate-45" />
-              </button>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+            <div className="flex gap-2">
+                <button onClick={() => setActiveTab('TELUR')} className={`flex-1 p-2 rounded-lg font-bold ${activeTab === 'TELUR' ? 'bg-orange-500 text-white' : 'bg-gray-100'}`}>Telur</button>
+                <button onClick={() => setActiveTab('PUPUK')} className={`flex-1 p-2 rounded-lg font-bold ${activeTab === 'PUPUK' ? 'bg-green-600 text-white' : 'bg-gray-100'}`}>Pupuk</button>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Tanggal</label>
-                <input 
-                  type="date"
-                  required
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-success-500"
-                  value={formData.tanggal}
-                  onChange={(e) => setFormData({...formData, tanggal: e.target.value})}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Nama Pembeli</label>
-                <input 
-                  type="text"
-                  required
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-success-500"
-                  value={formData.pembeli}
-                  onChange={(e) => setFormData({...formData, pembeli: e.target.value})}
-                  placeholder="Contoh: Toko Berkah"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Jumlah (KG)</label>
-                  <input 
-                    type="number"
-                    step="0.01"
-                    required
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-success-500"
-                    value={formData.jumlah_kg}
-                    onChange={(e) => setFormData({...formData, jumlah_kg: e.target.value})}
-                  />
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <input type="date" required className="w-full p-3 border rounded-xl" value={formData.tanggal} onChange={e => setFormData({...formData, tanggal: e.target.value})} />
+                <input type="text" placeholder="Nama Pembeli" required className="w-full p-3 border rounded-xl" onChange={e => setFormData({...formData, pembeli: e.target.value})} />
+                <div className="grid grid-cols-2 gap-2">
+                    <input type="number" placeholder={activeTab === 'TELUR' ? 'Jumlah (kg)' : 'Karung'} required className="w-full p-3 border rounded-xl" onChange={e => setFormData({...formData, jumlah: e.target.value})} />
+                    <input type="number" placeholder="Harga/unit" required className="w-full p-3 border rounded-xl" onChange={e => setFormData({...formData, harga: e.target.value})} />
                 </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Harga / KG</label>
-                  <input 
-                    type="number"
-                    required
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-success-500"
-                    value={formData.harga_per_kg}
-                    onChange={(e) => setFormData({...formData, harga_per_kg: e.target.value})}
-                  />
-                </div>
-              </div>
-              <div className="bg-success-50 p-4 rounded-xl">
-                 <p className="text-xs text-success-600 font-bold uppercase mb-1">Total Pendapatan</p>
-                 <p className="text-2xl font-bold text-success-700">Rp {formData.total_harga.toLocaleString('id-ID')}</p>
-              </div>
-              <div className="pt-4 flex gap-3">
-                <button type="button" onClick={() => setModalOpen(false)} className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-600 font-bold rounded-xl">Batal</button>
-                <button type="submit" className="flex-1 px-4 py-2.5 bg-success-600 text-white font-bold rounded-xl hover:bg-success-700 shadow-lg shadow-success-100">Simpan</button>
-              </div>
+                <div className="bg-gray-50 p-3 rounded-xl font-bold">Total: Rp {formData.total.toLocaleString('id-ID')}</div>
+                <button type="submit" className="w-full p-3 bg-primary-600 text-white rounded-xl font-bold">Simpan Penjualan</button>
             </form>
           </div>
         </div>

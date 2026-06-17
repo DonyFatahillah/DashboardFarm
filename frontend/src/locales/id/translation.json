@@ -1,0 +1,93 @@
+{
+  "nav": {
+    "home": "Beranda",
+    "statistics": "Statistik Peternakan",
+    "features": "Layanan Kami",
+    "buy_now": "Pesan Telur",
+    "contact_us": "Hubungi Kami"
+  },
+  "contact_modal": {
+    "title": "Hubungi Kami",
+    "subtitle": "Pilih metode kontak yang Anda inginkan ke Bu Sri Farm",
+    "whatsapp": "WhatsApp",
+    "email": "Alamat Email",
+    "instagram": "Instagram",
+    "close": "Tutup"
+  },
+  "whatsapp_messages": {
+    "order_eggs": "Halo Bu Sri Farm, saya tertarik untuk memesan telur. Boleh minta info harga dan ketersediaan untuk hari ini?"
+  },
+  "hero": {
+    "title": "Telur Segar dari",
+    "subtitle": "Bu Sri Farm",
+    "description": "Kami memadukan perawatan tradisional dengan teknologi modern untuk menghadirkan telur kualitas terbaik langsung ke tangan Anda dari Bu Sri Farm. Dipantau secara real-time untuk jaminan kesegaran.",
+    "view_stats": "Cek Kualitas Kami",
+    "our_features": "Mengapa Memilih Kami"
+  },
+  "stats": {
+    "title": "Transparansi Peternakan Real-Time",
+    "subtitle": "Lihat langsung performa peternakan kami sebelum Anda membeli",
+    "total_damaged_eggs": "Telur Tidak Layak Jual",
+    "today_production": "Telur Segar Hari Ini",
+    "monthly_revenue": "Total Penjualan",
+    "active_pens": "Unit Kandang Aktif",
+    "production_trend": "Kualitas Produksi (7 Hari)",
+    "production_volume": "Kapasitas Pasokan Harian"
+  },
+  "features": {
+    "title": "Manajemen Profesional untuk Kualitas Unggul",
+    "tag": "Komitmen Kami",
+    "analytics_title": "Pemantauan Kualitas",
+    "analytics_desc": "Setiap butir telur adalah hasil dari manajemen kesehatan dan nutrisi berbasis data.",
+    "inventory_title": "Pasokan Langsung",
+    "inventory_desc": "Pelacakan inventaris yang efisien memastikan Anda mendapatkan stok tersegar segera.",
+    "staff_title": "Penanganan Ahli",
+    "staff_desc": "Tim kami menggunakan alat profesional untuk menjaga standar peternakan terbaik."
+  },
+  "footer": {
+    "quick_links": "Tautan Cepat",
+    "contact_us": "Pesanan Grosir",
+    "motto": "Menghubungkan Anda langsung ke sumber nutrisi segar berkualitas.",
+    "rights": "Hak cipta dilindungi undang-undang."
+  },
+  "login": {
+    "title": "Sistem Manajemen Peternakan",
+    "subtitle": "Masuk untuk mengakses dasbor Anda",
+    "username": "Nama Pengguna",
+    "password": "Kata Sandi",
+    "username_placeholder": "Masukkan nama pengguna Anda",
+    "sign_in": "Masuk",
+    "welcome_back": "Selamat datang kembali!"
+  },
+  "sidebar": {
+    "dashboard": "Dasbor",
+    "kandang": "Kandang",
+    "produksi": "Produksi",
+    "kematian": "Kematian",
+    "pakan": "Pakan",
+    "penjualan": "Penjualan",
+    "absen": "Absensi",
+    "kesehatan": "Kesehatan",
+    "admin": "Admin",
+    "logout": "Keluar"
+  },
+  "navbar": {
+    "overview": "Ikhtisar",
+    "account_settings": "Pengaturan Akun",
+    "profile_details": "Detail Profil",
+    "logout_session": "Keluar Sesi"
+  },
+  "dashboard": {
+    "title": "Ikhtisar Dasbor",
+    "subtitle": "Statistik real-time untuk operasional peternakan Anda.",
+    "total_kandang": "Total Kandang",
+    "active_livestock": "Ayam Aktif",
+    "today_production": "Produksi Hari Ini",
+    "today_mortality": "Kematian Hari Ini",
+    "today_sorting": "Sortir Hari Ini",
+    "feed_used": "Pakan Terpakai (KG)",
+    "monthly_revenue": "Pendapatan Bulan Ini",
+    "production_7d": "Produksi Telur (7 Hari Terakhir)",
+    "production_per_pen": "Produksi per Kandang (30 Hari Terakhir)"
+  }
+}

@@ -21,11 +21,11 @@ export default function Produksi() {
     try {
       const query = new URLSearchParams(filters).toString();
       const [prodRes, kandangRes] = await Promise.all([
-        axios.get(`/produksi?${query}`),
-        axios.get('/kandang')
+        axios.get(`produksi?${query}`),
+        axios.get('kandang')
       ]);
       setData(prodRes.data.data);
-      setKandangs(kandangsRes.data.data);
+      setKandangs(kandangRes.data.data);
     } catch (error) {
       toast.error('Failed to fetch data');
     } finally {
@@ -42,18 +42,20 @@ export default function Produksi() {
       Tanggal: new Date(item.tanggal).toLocaleDateString('id-ID'),
       Kandang: item.nama_kandang,
       'Jumlah (Butir)': item.jumlah_telur,
-      'Berat (Kg)': item.berat_telur
+      'Berat (Kg)': item.berat_telur,
+      'Butir / Kg': item.berat_telur > 0 ? (item.jumlah_telur / item.berat_telur).toFixed(2) : 0
     }));
     exportToExcel(exportData, `Produksi-Harian-${new Date().getTime()}`);
   };
 
   const handleExportPDF = () => {
-    const headers = [['Tanggal', 'Kandang', 'Jumlah (Butir)', 'Berat (Kg)']];
+    const headers = [['Tanggal', 'Kandang', 'Jumlah (Butir)', 'Berat (Kg)', 'Butir / Kg']];
     const body = data.map(item => [
       new Date(item.tanggal).toLocaleDateString('id-ID'),
       item.nama_kandang,
       item.jumlah_telur.toLocaleString(),
-      `${item.berat_telur} kg`
+      `${item.berat_telur} kg`,
+      item.berat_telur > 0 ? (item.jumlah_telur / item.berat_telur).toFixed(1) : '0'
     ]);
     exportToPDF(headers, body, `Produksi-Harian-${new Date().getTime()}`, 'Laporan Produksi Harian');
   };
@@ -61,7 +63,7 @@ export default function Produksi() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/produksi', {
+      await axios.post('produksi', {
         ...formData,
         kandang_id: parseInt(formData.kandang_id),
         jumlah_telur: parseInt(formData.jumlah_telur),
@@ -147,16 +149,17 @@ export default function Produksi() {
                 <th className="px-6 py-4">Kandang</th>
                 <th className="px-6 py-4 text-center">Jumlah (Butir)</th>
                 <th className="px-6 py-4 text-center">Berat (Kg)</th>
+                <th className="px-6 py-4 text-center">Butir / Kg</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {loading ? (
                 <tr>
-                  <td colSpan="4" className="px-6 py-10 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-primary-500" /></td>
+                  <td colSpan="5" className="px-6 py-10 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-primary-500" /></td>
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-6 py-10 text-center text-gray-400">Belum ada data produksi</td>
+                  <td colSpan="5" className="px-6 py-10 text-center text-gray-400">Belum ada data produksi</td>
                 </tr>
               ) : (
                 data.map((item) => (
@@ -175,6 +178,9 @@ export default function Produksi() {
                     </td>
                     <td className="px-6 py-4 text-center font-bold text-primary-600">{item.jumlah_telur.toLocaleString()}</td>
                     <td className="px-6 py-4 text-center font-medium text-gray-600">{item.berat_telur} kg</td>
+                    <td className="px-6 py-4 text-center font-bold text-amber-600">
+                      {item.berat_telur > 0 ? (item.jumlah_telur / item.berat_telur).toFixed(1) : 0}
+                    </td>
                   </tr>
                 ))
               )}
@@ -238,6 +244,12 @@ export default function Produksi() {
                   />
                 </div>
               </div>
+              {formData.jumlah_telur > 0 && formData.berat_telur > 0 && (
+                <div className="bg-amber-50 p-3 rounded-xl border border-amber-100 flex items-center justify-between">
+                  <span className="text-sm font-medium text-amber-800">Estimasi Ukuran:</span>
+                  <span className="font-bold text-amber-700">{(formData.jumlah_telur / formData.berat_telur).toFixed(1)} butir/kg</span>
+                </div>
+              )}
               <div className="pt-4 flex gap-3">
                 <button type="button" onClick={() => setModalOpen(false)} className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50">Batal</button>
                 <button type="submit" className="flex-1 px-4 py-2.5 bg-primary-500 text-white font-bold rounded-xl hover:bg-primary-600 shadow-lg">Simpan</button>

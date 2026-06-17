@@ -1,4 +1,6 @@
 const dashboardService = require('../services/dashboardService');
+const telurRusakService = require('../services/telurRusakService');
+const pupukService = require('../services/pupukService');
 const { successResponse } = require('../utils/response');
 
 class PublicController {
@@ -6,11 +8,15 @@ class PublicController {
     try {
       const summary = await dashboardService.getSummary();
       const charts = await dashboardService.getProductionChart();
+      const telurRusakData = await telurRusakService.getSummary();
+      const pupukData = await pupukService.getAll();
       
-      // Filter sensitive info if any, but summary seems okay for general stats
+      const totalTelurRusak = telurRusakData.reduce((acc, curr) => acc + parseInt(curr.total_rusak || 0), 0);
+      const totalPupukTerjual = pupukData.reduce((acc, curr) => acc + parseInt(curr.jumlah_karung || 0), 0);
+      
       const publicData = {
-        totalKandang: summary.total_kandang,
-        totalAyam: summary.total_ayam_aktif,
+        totalPupukTerjual: totalPupukTerjual,
+        totalTelurRusak: totalTelurRusak,
         produksiHariIni: summary.produksi_hari_ini,
         totalPakanHariIni: summary.total_pakan_hari_ini,
         pendapatanBulanIni: summary.total_pendapatan_bulan_ini,

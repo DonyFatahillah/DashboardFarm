@@ -21,3 +21,6 @@ yarn-debug.log*
 .DS_Store
 .vscode/
 .idea/
+vercel.json
+frontend/vite.config.js
+start-dev.bat

@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
-import { Wheat, Lock, User, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Wheat, Lock, User, Eye, EyeOff, Loader2, Globe } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function Login() {
@@ -11,6 +12,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { lang } = useParams();
+  const { t, i18n } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,15 +22,30 @@ export default function Login() {
     setLoading(false);
     
     if (result.success) {
-      toast.success('Welcome back!');
-      navigate('/dashboard');
+      toast.success(t('login.welcome_back'));
+      navigate(`/${lang}/dashboard`);
     } else {
       toast.error(result.message);
     }
   };
 
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'id' : 'en';
+    navigate(`/${newLang}${window.location.pathname.replace(/^\/[a-z]{2}/, '')}`);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
+      <div className="absolute top-4 right-4 sm:top-8 sm:right-8">
+        <button
+          onClick={toggleLanguage}
+          className="flex items-center space-x-2 text-gray-600 hover:text-primary-600 font-medium bg-white shadow-sm border border-gray-100 px-4 py-2 rounded-xl transition-all hover:shadow-md"
+        >
+          <Globe className="h-4 w-4" />
+          <span>{i18n.language === 'en' ? 'Indonesia' : 'English'}</span>
+        </button>
+      </div>
+
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
             <div className="bg-primary-500 p-3 rounded-2xl text-white shadow-xl shadow-primary-100">
@@ -35,10 +53,10 @@ export default function Login() {
             </div>
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-primary-900 tracking-tight">
-          Farm Management System
+          {t('login.title')}
         </h2>
         <p className="mt-2 text-center text-sm text-gray-500">
-          Sign in to access your dashboard
+          {t('login.subtitle')}
         </p>
       </div>
 
@@ -47,7 +65,7 @@ export default function Login() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Username
+                {t('login.username')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -59,14 +77,14 @@ export default function Login() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                  placeholder="Enter your username"
+                  placeholder={t('login.username_placeholder')}
                 />
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Password
+                {t('login.password')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -99,7 +117,7 @@ export default function Login() {
                 {loading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
-                  'Sign In'
+                  t('login.sign_in')
                 )}
               </button>
             </div>
@@ -107,7 +125,7 @@ export default function Login() {
 
           <div className="mt-8 pt-6 border-t border-gray-50">
             <p className="text-center text-xs text-gray-400">
-                &copy; 2026 Farm Management Solutions. All rights reserved.
+                &copy; 2026 Farm Management Solutions. {t('footer.rights')}
             </p>
           </div>
         </div>

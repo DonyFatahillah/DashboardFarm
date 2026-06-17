@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS kematian_harian (
     kandang_id INT NOT NULL,
     tanggal DATE NOT NULL,
     jumlah_mati INT NOT NULL,
+    jumlah_sortir INT DEFAULT 0,
     penyebab VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (kandang_id) REFERENCES kandang(id) ON DELETE CASCADE
@@ -74,6 +75,51 @@ CREATE TABLE IF NOT EXISTS penjualan_telur (
     pembeli VARCHAR(100) NOT NULL,
     jumlah_kg DECIMAL(10, 2) NOT NULL,
     harga_per_kg DECIMAL(10, 2) NOT NULL,
+    total_harga DECIMAL(12, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table: kesehatan_ayam
+CREATE TABLE IF NOT EXISTS kesehatan_ayam (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    kandang_id INT NOT NULL,
+    jenis_kegiatan VARCHAR(100) NOT NULL,
+    tanggal_rencana DATE NOT NULL,
+    status ENUM('PENDING', 'DONE') DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (kandang_id) REFERENCES kandang(id) ON DELETE CASCADE
+);
+
+-- Table: telur_rusak
+CREATE TABLE IF NOT EXISTS telur_rusak (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    kandang_id INT NOT NULL,
+    tanggal DATE NOT NULL,
+    jumlah INT NOT NULL,
+    kualitas_keterangan VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (kandang_id) REFERENCES kandang(id) ON DELETE CASCADE
+);
+
+-- Table: absen_karyawan
+CREATE TABLE IF NOT EXISTS absen_karyawan (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NULL,
+    nama_luar VARCHAR(100) NULL,
+    tanggal DATE NOT NULL,
+    status ENUM('HADIR', 'IZIN', 'SAKIT', 'ALPHA') NOT NULL,
+    keterangan TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Table: penjualan_pupuk
+CREATE TABLE IF NOT EXISTS penjualan_pupuk (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tanggal DATE NOT NULL,
+    pembeli VARCHAR(100) NOT NULL,
+    jumlah_karung INT NOT NULL,
+    harga_per_karung DECIMAL(10, 2) NOT NULL,
     total_harga DECIMAL(12, 2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -31,8 +31,8 @@ export default function Admin() {
   const fetchData = async () => {
     try {
       const [usersRes, kandangRes] = await Promise.all([
-        axios.get('/users'),
-        axios.get('/kandang')
+        axios.get('users'),
+        axios.get('kandang')
       ]);
       setData(usersRes.data.data);
       setKandangList(kandangRes.data.data);
@@ -55,7 +55,7 @@ export default function Admin() {
 
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        await axios.delete(`/users/${id}`);
+        await axios.delete(`users/${id}`);
         toast.success('User deleted successfully');
         fetchData();
       } catch (error) {
@@ -74,7 +74,7 @@ export default function Admin() {
         kandang_id: formData.isAdmin ? null : (formData.kandang_id ? parseInt(formData.kandang_id) : null)
       };
 
-      await axios.post('/users', payload);
+      await axios.post('users', payload);
       toast.success('User created successfully');
       setModalOpen(false);
       setFormData({ username: '', password: '', role: 'STAFF', kandang_id: '', isAdmin: false });
@@ -107,14 +107,14 @@ export default function Admin() {
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-        <div className="p-4 border-b border-gray-50 flex items-center gap-3">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="p-6 border-b border-slate-50 flex items-center gap-3">
             <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input 
                     type="text"
-                    placeholder="Search users..."
-                    className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-sm"
+                    placeholder="Cari user..."
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-400 transition-all text-sm"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -123,68 +123,62 @@ export default function Admin() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider font-bold">
+            <thead className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold">
               <tr>
-                <th className="px-6 py-4">Username</th>
-                <th className="px-6 py-4">Role</th>
-                <th className="px-6 py-4">Assign Kandang</th>
-                <th className="px-6 py-4 text-right">Aksi</th>
+                <th className="px-8 py-5">Username</th>
+                <th className="px-6 py-5">Role</th>
+                <th className="px-6 py-5">Kandang</th>
+                <th className="px-8 py-5 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-slate-50">
               {loading ? (
                 <tr>
                   <td colSpan="4" className="px-6 py-10 text-center">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary-500" />
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-slate-400" />
                   </td>
                 </tr>
               ) : filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-6 py-10 text-center text-gray-400">
-                    No users found
+                  <td colSpan="4" className="px-6 py-10 text-center text-slate-400">
+                    User tidak ditemukan
                   </td>
                 </tr>
               ) : (
                 filteredData.map((item) => (
-                  <tr key={item.id} className="hover:bg-primary-50/30 transition-colors group">
-                    <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center font-bold">
+                  <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
+                    <td className="px-8 py-4">
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center font-bold text-sm shadow-inner">
                                 {item.username.charAt(0).toUpperCase()}
                             </div>
-                            <span className="font-semibold text-gray-900">{item.username}</span>
+                            <span className="font-semibold text-slate-800">{item.username}</span>
                         </div>
                     </td>
-                    <td className="px-6 py-4 text-gray-600">
-                        <div className="flex items-center gap-1.5">
-                            <Shield className="w-4 h-4 text-gray-400" />
-                            <span className={cn(
-                                "px-2 py-1 rounded-full text-xs font-bold",
-                                item.role === 'OWNER' ? "bg-purple-100 text-purple-700" :
-                                item.role === 'MANAGER' ? "bg-blue-100 text-blue-700" :
-                                "bg-gray-100 text-gray-700"
-                            )}>
-                                {item.role === 'OWNER' ? 'ADMIN' : item.role}
-                            </span>
-                        </div>
+                    <td className="px-6 py-4">
+                        <span className={cn(
+                            "px-3 py-1 rounded-full text-xs font-medium border",
+                            item.role === 'OWNER' ? "bg-amber-50 border-amber-200 text-amber-700" :
+                            item.role === 'MANAGER' ? "bg-sky-50 border-sky-200 text-sky-700" :
+                            "bg-slate-100 border-slate-200 text-slate-600"
+                        )}>
+                            {item.role === 'OWNER' ? 'ADMIN' : item.role}
+                        </span>
                     </td>
-                    <td className="px-6 py-4 text-gray-600">
-                        <div className="flex items-center gap-1.5">
-                            <Warehouse className="w-4 h-4 text-gray-400" />
-                            {item.kandang_nama || 'All Access'}
-                        </div>
+                    <td className="px-6 py-4 text-slate-600 font-medium text-sm">
+                        {item.kandang_nama || <span className="text-slate-400 italic">Full Access</span>}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-8 py-4 text-right">
                       {item.id !== currentUser.id ? (
                         <button 
                           onClick={() => handleDelete(item.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors group-hover:scale-110"
-                          title="Delete User"
+                          className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                          title="Hapus User"
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
                       ) : (
-                        <span className="text-xs font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded-md italic">You</span>
+                        <span className="text-xs font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Self</span>
                       )}
                     </td>
                   </tr>

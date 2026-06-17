@@ -2,10 +2,10 @@ const pool = require('../config/db');
 
 class KematianRepository {
   async create(data) {
-    const { kandang_id, tanggal, jumlah_mati, penyebab } = data;
+    const { kandang_id, tanggal, jumlah_mati, jumlah_sortir, penyebab } = data;
     const [result] = await pool.query(
-      'INSERT INTO kematian_harian (kandang_id, tanggal, jumlah_mati, penyebab) VALUES (?, ?, ?, ?)',
-      [kandang_id, tanggal, jumlah_mati, penyebab]
+      'INSERT INTO kematian_harian (kandang_id, tanggal, jumlah_mati, jumlah_sortir, penyebab) VALUES (?, ?, ?, ?, ?)',
+      [kandang_id, tanggal, jumlah_mati, jumlah_sortir || 0, penyebab]
     );
     return { id: result.insertId, ...data };
   }

@@ -13,6 +13,7 @@ export default function Kematian() {
     kandang_id: '', 
     tanggal: new Date().toISOString().split('T')[0], 
     jumlah_mati: 0, 
+    jumlah_sortir: 0,
     penyebab: '' 
   });
   const [filters, setFilters] = useState({ kandang_id: '', start: '', end: '' });
@@ -21,8 +22,8 @@ export default function Kematian() {
     try {
       const query = new URLSearchParams(filters).toString();
       const [res, kandangRes] = await Promise.all([
-        axios.get(`/kematian?${query}`),
-        axios.get('/kandang')
+        axios.get(`kematian?${query}`),
+        axios.get('kandang')
       ]);
       setData(res.data.data);
       setKandangs(kandangRes.data.data);
@@ -42,17 +43,19 @@ export default function Kematian() {
       Tanggal: new Date(item.tanggal).toLocaleDateString('id-ID'),
       Kandang: item.nama_kandang,
       'Jumlah Mati': item.jumlah_mati,
+      'Jumlah Sortir': item.jumlah_sortir,
       Penyebab: item.penyebab || '-'
     }));
     exportToExcel(exportData, `Kematian-Harian-${new Date().getTime()}`);
   };
 
   const handleExportPDF = () => {
-    const headers = [['Tanggal', 'Kandang', 'Jumlah Mati', 'Penyebab']];
+    const headers = [['Tanggal', 'Kandang', 'Jumlah Mati', 'Jumlah Sortir', 'Penyebab']];
     const body = data.map(item => [
       new Date(item.tanggal).toLocaleDateString('id-ID'),
       item.nama_kandang,
       item.jumlah_mati,
+      item.jumlah_sortir,
       item.penyebab || '-'
     ]);
     exportToPDF(headers, body, `Kematian-Harian-${new Date().getTime()}`, 'Laporan Kematian Harian');
@@ -61,10 +64,11 @@ export default function Kematian() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/kematian', {
+      await axios.post('kematian', {
         ...formData,
         kandang_id: parseInt(formData.kandang_id),
-        jumlah_mati: parseInt(formData.jumlah_mati)
+        jumlah_mati: parseInt(formData.jumlah_mati),
+        jumlah_sortir: parseInt(formData.jumlah_sortir)
       });
       toast.success('Record saved');
       setModalOpen(false);
@@ -144,17 +148,18 @@ export default function Kematian() {
                 <th className="px-6 py-4">Tanggal</th>
                 <th className="px-6 py-4">Kandang</th>
                 <th className="px-6 py-4 text-center">Jumlah Mati</th>
+                <th className="px-6 py-4 text-center">Jumlah Sortir</th>
                 <th className="px-6 py-4">Penyebab</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {loading ? (
                 <tr>
-                  <td colSpan="4" className="px-6 py-10 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-primary-500" /></td>
+                  <td colSpan="5" className="px-6 py-10 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-primary-500" /></td>
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-6 py-10 text-center text-gray-400">No records found</td>
+                  <td colSpan="5" className="px-6 py-10 text-center text-gray-400">No records found</td>
                 </tr>
               ) : (
                 data.map((item) => (
@@ -162,6 +167,7 @@ export default function Kematian() {
                     <td className="px-6 py-4 font-medium">{new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
                     <td className="px-6 py-4 font-semibold text-gray-700">{item.nama_kandang}</td>
                     <td className="px-6 py-4 text-center font-bold text-danger-600">{item.jumlah_mati}</td>
+                    <td className="px-6 py-4 text-center font-bold text-orange-600">{item.jumlah_sortir}</td>
                     <td className="px-6 py-4 text-gray-600">{item.penyebab || '-'}</td>
                   </tr>
                 ))
@@ -211,6 +217,16 @@ export default function Kematian() {
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-danger-500"
                   value={formData.jumlah_mati}
                   onChange={(e) => setFormData({...formData, jumlah_mati: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Jumlah Sortir (Ekor)</label>
+                <input 
+                  type="number"
+                  required
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-500"
+                  value={formData.jumlah_sortir}
+                  onChange={(e) => setFormData({...formData, jumlah_sortir: e.target.value})}
                 />
               </div>
               <div>
