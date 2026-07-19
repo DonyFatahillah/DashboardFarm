@@ -1,5 +1,5 @@
 <?php
-$envPath = __DIR__ . '/../../../../../backend/.env';
+$envPath = __DIR__ . '/../../../backend/.env';
 $env = [];
 if (file_exists($envPath)) {
     $env = parse_ini_file($envPath);
