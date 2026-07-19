@@ -10,6 +10,7 @@ frontend/.env
 # Mengabaikan hasil build/produksi
 frontend/build/
 backend/dist/
+backend/tmp/
 
 # Logs
 *.log
