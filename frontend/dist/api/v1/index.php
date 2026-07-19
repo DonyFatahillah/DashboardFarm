@@ -53,8 +53,13 @@ try {
     elseif ($resource === 'dashboard') {
         $user = authenticate();
         require_once __DIR__ . '/controllers/DashboardController.php';
-        if ($action === 'summary') DashboardController::summary($pdo);
-        if ($action === 'chart') DashboardController::chart($pdo);
+        if ($action === 'summary') {
+            DashboardController::summary($pdo);
+        } elseif ($action === 'charts') {
+            DashboardController::chart($pdo);
+        } else {
+            sendError('Not Found', 404);
+        }
     }
     else {
         sendError('Not Found', 404);
