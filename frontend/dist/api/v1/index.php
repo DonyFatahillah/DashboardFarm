@@ -81,7 +81,6 @@ try {
         }
     }
     elseif ($resource === 'ai' && $action === 'chat') {
-        $user = authenticate();
         require_once __DIR__ . '/controllers/AiController.php';
         AiController::chat($pdo, $body, $geminiKey);
     }
