@@ -1,13 +1,7 @@
 ---
 deployment:
   tasks:
-    # 1. Export the path to cPanel's Node.js/NPM (using Node 18, change to ea-nodejs20 if needed)
     - export PATH=/opt/cpanel/ea-nodejs18/bin:$PATH
-    
-    # 2. Build the frontent
-    # 1. Export the path to cPanel's Node.js/NPM 
-    # (If your cPanel uses a different Node version, change ea-nodejs18 to ea-nodejs20 etc.)
-    - export DEPLOYPATH=/home/busr4192/public_html/
     - cd /home/busr4192/repositories/DashboardFarm/frontend
     - npm install
     - npm run build
