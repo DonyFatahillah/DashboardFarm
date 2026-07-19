@@ -1,0 +1,20 @@
+---
+deployment:
+  tasks:
+    # 1. Export the path to cPanel's Node.js/NPM 
+    # (If your cPanel uses a different Node version, change ea-nodejs18 to ea-nodejs20 etc.)
+    - export PATH=/opt/cpanel/ea-nodejs18/bin:$PATH
+    
+    # 2. Build the frontend
+    - cd frontend
+    - npm install
+    - npm run build
+    
+    # 3. Copy the built frontend files to the public HTML folder
+    # $HOME automatically evaluates to your cPanel /home/username/ folder
+    - /bin/cp -R dist/* $HOME/public_html/
+    
+    # 4. (Optional) If you want to automatically restart the backend API when pushing changes,
+    # you can touch the restart.txt file. Uncomment and adjust the path below to match
+    # the folder name you chose for your repository in step 2.
+    # - touch $HOME/farm-repo/backend/tmp/restart.txt
