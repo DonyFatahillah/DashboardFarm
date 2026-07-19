@@ -23,7 +23,13 @@ class DashboardController {
     }
 
     public static function chart($pdo) {
-        $data = $pdo->query("SELECT DATE(tanggal) as date, SUM(jumlah_telur) as total_telur FROM produksi_harian GROUP BY DATE(tanggal) ORDER BY DATE(tanggal) DESC LIMIT 7")->fetchAll();
-        sendResponse(array_reverse($data), 'Chart data retrieved');
+        $production = $pdo->query("SELECT DATE(tanggal) as date, SUM(jumlah_telur) as total_telur FROM produksi_harian GROUP BY DATE(tanggal) ORDER BY DATE(tanggal) DESC LIMIT 7")->fetchAll();
+        
+        $productionByKandang = $pdo->query("SELECT k.nama as name, SUM(p.jumlah_telur) as total_telur FROM produksi_harian p JOIN kandang k ON p.kandang_id = k.id WHERE p.tanggal >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) GROUP BY k.id, k.nama")->fetchAll();
+
+        sendResponse([
+            'production' => array_reverse($production),
+            'productionByKandang' => $productionByKandang
+        ], 'Chart data retrieved');
     }
 }
