@@ -61,6 +61,30 @@ try {
             sendError('Not Found', 404);
         }
     }
+    elseif (in_array($resource, ['kandang', 'produksi', 'kematian', 'pakan', 'penjualan', 'pupuk', 'absen', 'health', 'telur-rusak', 'users'])) {
+        $user = authenticate();
+        $className = str_replace(' ', '', ucwords(str_replace('-', ' ', $resource))) . 'Controller';
+        require_once __DIR__ . '/controllers/' . $className . '.php';
+        
+        $id = is_numeric($action) ? $action : null;
+        
+        if ($method === 'GET') {
+            $className::getAll($pdo, $_GET);
+        } elseif ($method === 'POST') {
+            $className::create($pdo, $body);
+        } elseif ($method === 'PUT' && $id) {
+            $className::update($pdo, $id, $body);
+        } elseif ($method === 'DELETE' && $id) {
+            $className::delete($pdo, $id);
+        } else {
+            sendError('Method Not Allowed', 405);
+        }
+    }
+    elseif ($resource === 'ai' && $action === 'chat') {
+        $user = authenticate();
+        require_once __DIR__ . '/controllers/AiController.php';
+        AiController::chat($pdo, $body, $geminiKey);
+    }
     else {
         sendError('Not Found', 404);
     }
