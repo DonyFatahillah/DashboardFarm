@@ -2,7 +2,7 @@
 deployment:
   tasks:
     # 1. Copy the pre-built frontend files to your public_html folder
-    - /bin/cp -R /home/busr4192/repositories/DashboardFarm/frontend/dist/* /home/busr4192/public_html/
+    - /bin/cp -a /home/busr4192/repositories/DashboardFarm/frontend/dist/. /home/busr4192/public_html/
     
     # 2. Automatically restart the Node.js backend when new code is pulled
     - mkdir -p /home/busr4192/repositories/DashboardFarm/backend/tmp
