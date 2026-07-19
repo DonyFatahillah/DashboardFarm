@@ -1,8 +1,15 @@
 <?php
-$envPath = __DIR__ . '/../../../backend/.env';
+$envPaths = [
+    __DIR__ . '/../../../backend/.env', // Local development
+    __DIR__ . '/../../repositories/DashboardFarm/backend/.env' // cPanel production
+];
+
 $env = [];
-if (file_exists($envPath)) {
-    $env = parse_ini_file($envPath);
+foreach ($envPaths as $path) {
+    if (file_exists($path)) {
+        $env = parse_ini_file($path);
+        break;
+    }
 }
 
 $host = $env['DB_HOST'] ?? '127.0.0.1';
