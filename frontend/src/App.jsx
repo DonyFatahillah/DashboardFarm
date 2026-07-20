@@ -91,8 +91,8 @@ function App() {
             <LanguageHandler />
             <Routes>
               {/* Public Routes */}
-              <Route path="/" element={user ? <Navigate to="../dashboard" /> : <Landing />} />
-              <Route path="/login" element={user ? <Navigate to="../dashboard" /> : <Login />} />
+              <Route path="" element={user ? <Navigate to="../dashboard" /> : <Landing />} />
+              <Route path="login" element={user ? <Navigate to="../dashboard" /> : <Login />} />
               
               {/* Protected Dashboard Routes */}
               <Route element={
@@ -100,15 +100,15 @@ function App() {
                   <DashboardLayout />
                 </ProtectedRoute>
               }>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/kandang" element={<Kandang />} />
-                <Route path="/produksi" element={<Produksi />} />
-                <Route path="/kematian" element={<Kematian />} />
-                <Route path="/pakan" element={<Pakan />} />
-                <Route path="/penjualan" element={<Penjualan />} />
-                <Route path="/absen" element={<Absen />} />
-                <Route path="/kesehatan" element={<Kesehatan />} />
-                <Route path="/admin" element={
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="kandang" element={<Kandang />} />
+                <Route path="produksi" element={<Produksi />} />
+                <Route path="kematian" element={<Kematian />} />
+                <Route path="pakan" element={<Pakan />} />
+                <Route path="penjualan" element={<Penjualan />} />
+                <Route path="absen" element={<Absen />} />
+                <Route path="kesehatan" element={<Kesehatan />} />
+                <Route path="admin" element={
                   <ProtectedRoute requiredRole="OWNER">
                     <Admin />
                   </ProtectedRoute>
