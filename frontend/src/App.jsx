@@ -53,6 +53,20 @@ const LanguageHandler = () => {
   return null;
 };
 
+const TitleUpdater = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname.endsWith('/admin')) {
+      document.title = 'Dashboard Farm Management';
+    } else {
+      document.title = 'Bu Sri Farm';
+    }
+  }, [location]);
+
+  return null;
+};
+
 function App() {
   const { user, loading } = useAuth();
 
@@ -66,6 +80,7 @@ function App() {
 
   return (
     <Router>
+      <TitleUpdater />
       <Routes>
         <Route path="/:lang/*" element={
           <>
