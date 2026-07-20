@@ -35,7 +35,11 @@ export default function AIChatbox() {
       const aiMessage = { role: "model", parts: [{ text: response.data.data.response }] };
       setChatHistory((prev) => [...prev, aiMessage]);
     } catch (error) {
-      toast.error("Failed to get AI response");
+      if (error.response?.status === 429) {
+        toast.error("Terlalu banyak permintaan ke AI. Silakan tunggu sebentar.");
+      } else {
+        toast.error("Gagal mendapatkan respon AI");
+      }
       console.error(error);
     } finally {
       setLoading(false);
