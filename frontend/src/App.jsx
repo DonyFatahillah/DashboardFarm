@@ -57,9 +57,11 @@ const TitleUpdater = () => {
   const location = useLocation();
 
   useEffect(() => {
+    const dashboardPages = ['/dashboard', '/kandang', '/produksi', '/kematian', '/pakan', '/penjualan', '/absen', '/kesehatan'];
+    
     if (location.pathname.endsWith('/admin')) {
       document.title = 'Dashboard Farm Management';
-    } else if (location.pathname.includes('/dashboard')) {
+    } else if (dashboardPages.some(page => location.pathname.includes(page))) {
       document.title = 'Dashboard';
     } else {
       document.title = 'Bu Sri Farm';
