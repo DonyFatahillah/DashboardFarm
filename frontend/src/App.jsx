@@ -59,6 +59,8 @@ const TitleUpdater = () => {
   useEffect(() => {
     if (location.pathname.endsWith('/admin')) {
       document.title = 'Dashboard Farm Management';
+    } else if (location.pathname.includes('/dashboard')) {
+      document.title = 'Dashboard';
     } else {
       document.title = 'Bu Sri Farm';
     }
